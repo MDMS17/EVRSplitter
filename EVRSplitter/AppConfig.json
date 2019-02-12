@@ -1,0 +1,7 @@
+﻿{
+  "ConnectionString": "Server=xxx;Database=yyy;Trusted_Connection=True;MultipleActiveResultSets=True;Connection Timeout=900;",
+  "DestinationPath": "C:\\Temp",
+  "SMTPServer": "org.mail.protection.outlook.com",
+  "sendEmailFrom": "DoNotReply@test.org",
+  "sendEmailTo": "yan-m@test.org"
+} 
