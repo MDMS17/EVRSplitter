@@ -1,0 +1,590 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MCPD File",
+  "description": "Managed Care Program Data file format for reporting Grievances, Appeals, Continuity of Care records, and Out of Network requests.",
+  "type": "object",
+  "properties": {
+    "header": {
+      "description": "The file header",
+      "type": "object",
+      "properties": {
+        "planParent": {
+          "type": "string",
+          "description": "The name of the managed care plan",
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "submissionDate": {
+          "type": "string",
+          "description": "Date the data was submitted to DHCS",
+          "pattern": "^[0-9]{8}$"
+        },
+        "schemaVersion": {
+          "type": "string",
+          "description": "The version of the schema to which the submitted file adheres",
+          "enum": [
+            "1.7"
+          ]
+        }
+      },
+      "required": [
+        "planParent",
+        "submissionDate",
+        "schemaVersion"
+      ],
+      "additionalProperties": false
+    },
+    "grievances": {
+      "type": "array",
+      "description": "Grievances",
+      "items": {
+        "type": "object",
+        "properties": {
+          "planCode": {
+            "$ref": "#/definitions/planCodeDefinition"
+          },
+          "cin": {
+            "$ref": "#/definitions/cinDefinition"
+          },
+          "grievanceId": {
+            "type": "string",
+            "description": "Unique identifier for each submitted grievance record",
+            "minLength": 4,
+            "maxLength": 20
+          },
+          "recordType": {
+            "$ref": "#/definitions/recordTypeDefinition"
+          },
+          "parentGrievanceId": {
+            "type": "string",
+            "description": "Links to Original Grievance when either a Resubmission or Void is sent. Leave blank when Record type = Original",
+            "minLength": 4,
+            "maxLength": 20
+          },
+          "grievanceReceivedDate": {
+            "type": "string",
+            "description": "The date the plan received the grievance",
+            "pattern": "^[0-9]{8}$"
+          },
+          "grievanceType": {
+            "type": "array",
+            "description": "Define the type or types of grievance. Must have at least one value, but may have multiple values",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "Assault / Harassment",
+                "Authorization",
+                "Billing",
+                "Case Management / Care Coordination",
+                "Continuity Of Care",
+                "Disability Discrimination",
+                "Discrimination",
+                "Eligibility",
+                "Enrollment",
+                "Fraud / Waste / Abuse",
+                "Geographic Access",
+                "Inappropriate Care",
+                "Language Access",
+                "Member Informing Materials",
+                "Out-of-Network",
+                "PHI / Confidentiality / HIPAA",
+                "Physical Access",
+                "Provider Availability",
+                "Provider / Staff Attitude",
+                "Referral",
+                "Technology / Telephone",
+                "Timely Access",
+                "Transportation"
+              ]
+            }
+          },
+          "benefitType": {
+            "$ref": "#/definitions/benefitTypeDefinition"
+          },
+          "exemptIndicator": {
+            "type": "string",
+            "description": "Exempt Grievance means grievance received over the telephone that is not coverage dispute, disputed health care services involving medical necessity or experimental or investigational treatment, and resolved within the next business day",
+            "enum": [
+              "Exempt",
+              "Not Exempt",
+              "Forwarded to Medi-Cal Rx CSC",
+              "Forwarded to Medi-Cal CSC"
+            ]
+          }
+        },
+        "required": [
+          "planCode",
+          "cin",
+          "grievanceId",
+          "recordType",
+          "grievanceReceivedDate",
+          "grievanceType",
+          "benefitType",
+          "exemptIndicator"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "appeals": {
+      "type": "array",
+      "description": "Appeals",
+      "items": {
+        "type": "object",
+        "properties": {
+          "planCode": {
+            "$ref": "#/definitions/planCodeDefinition"
+          },
+          "cin": {
+            "$ref": "#/definitions/cinDefinition"
+          },
+          "appealId": {
+            "type": "string",
+            "description": "Unique identifier for each submitted appeal record",
+            "minLength": 4,
+            "maxLength": 20
+          },
+          "recordType": {
+            "$ref": "#/definitions/recordTypeDefinition"
+          },
+          "parentGrievanceId": {
+            "type": "string",
+            "description": "Links to Original Grievance when either a Resubmission or Void is sent. Leave blank when Record type = Original",
+            "minLength": 4,
+            "maxLength": 20
+          },
+          "parentAppealId": {
+            "type": "string",
+            "description": "Links to Original Appeal when either a Resubmission or Void is sent. Leave blank when Record type = Original",
+            "minLength": 4,
+            "maxLength": 20
+          },
+          "appealReceivedDate": {
+            "type": "string",
+            "description": "The date the plan received the appeal",
+            "pattern": "^[0-9]{8}$"
+          },
+          "noticeOfActionDate": {
+            "type": "string",
+            "description": "The date the plan sent the Notice of Action to the beneficiary",
+            "pattern": "^[0-9]{8}$"
+          },
+          "appealType": {
+            "type": "string",
+            "description": "The Appeal type that is being reported",
+            "enum": [
+              "Denied",
+              "Deferred",
+              "Modified"
+            ]
+          },
+          "benefitType": {
+            "$ref": "#/definitions/benefitTypeDefinition"
+          },
+          "appealResolutionStatusIndicator": {
+            "type": "string",
+            "description": "The code for the Appeal's resolution outcome",
+            "enum": [
+              "Unresolved",
+              "Resolved in Favor of Member",
+              "Resolved in Favor of Plan"
+            ]
+          },
+          "appealResolutionDate": {
+            "type": "string",
+            "description": "The date the plan resolved the appeal. Leave blank if Resolved Appeal = Unresolved",
+            "pattern": "^[0-9]{8}$"
+          },
+          "partiallyOverturnIndicator": {
+            "type": "string",
+            "description": "A partially overturned appeal occurs when a benefit or service has been modified or adjusted from the original request",
+            "enum": [
+              "Not a Partially Overturned Appeal",
+              "Partially Overturned Appeal"
+            ]
+          },
+          "expeditedIndicator": {
+            "type": "string",
+            "description": "Indicates whether the Appeal was expedited",
+            "enum": [
+              "Expedited",
+              "Not Expedited"
+            ]
+          }
+        },
+        "required": [
+          "planCode",
+          "cin",
+          "appealId",
+          "recordType",
+          "appealReceivedDate",
+          "appealType",
+          "benefitType",
+          "appealResolutionStatusIndicator",
+          "expeditedIndicator"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "continuityOfCare": {
+      "type": "array",
+      "description": "Continuity of Care records",
+      "items": {
+        "type": "object",
+        "properties": {
+          "planCode": {
+            "$ref": "#/definitions/planCodeDefinition"
+          },
+          "cin": {
+            "$ref": "#/definitions/cinDefinition"
+          },
+          "cocId": {
+            "type": "string",
+            "description": "Unique identifier for each submitted continuity of care record",
+            "minLength": 4,
+            "maxLength": 20
+          },
+          "recordType": {
+            "$ref": "#/definitions/recordTypeDefinition"
+          },
+          "parentCocId": {
+            "type": "string",
+            "description": "Links to Original Continuity of Care when either a Resubmission or Void is sent. Leave blank when Record type = Original",
+            "minLength": 4,
+            "maxLength": 20
+          },
+          "cocReceivedDate": {
+            "type": "string",
+            "description": "The date the plan received the Continuity of Care record",
+            "pattern": "^[0-9]{8}$"
+          },
+          "cocType": {
+            "type": "string",
+            "description": "Indicates the type of Continuity of Care record",
+            "enum": [
+              "MER Denial",
+              "Other"
+            ]
+          },
+          "benefitType": {
+            "$ref": "#/definitions/benefitTypeDefinition"
+          },
+          "cocDispositionIndicator": {
+            "type": "string",
+            "description": "Indicate disposition of Continuity of Care Request",
+            "enum": [
+              "Approved",
+              "Denied",
+              "Pending",
+              "Provider is in MCP Network",
+              "Cancelled"
+            ]
+          },
+          "cocExpirationDate": {
+            "type": "string",
+            "description": "The date the Continuity of Care expires",
+            "pattern": "^[0-9]{8}$"
+          },
+          "cocDenialReasonIndicator": {
+            "type": "string",
+            "description": "The reason for the Continuity of Care request being denied",
+            "enum": [
+              "No relationship between member and provider",
+              "Provider refused to work with managed care plan",
+              "Provider not state approved",
+              "Quality of care issues",
+              "Provider and plan did not agree to a rate",
+              "Provider is in MCP Network",
+              "Other"
+            ]
+          },
+          "submittingProviderNpi": {
+            "type": "string",
+            "description": "The ten-digit NPI of the provider who initiated or submitted the MER on behalf of the beneficiary",
+            "pattern": "^[0-9]{10}$"
+          },
+          "cocProviderNpi": {
+            "type": "string",
+            "description": "The ten-digit NPI of the provider to which the beneficiary is linked resulting from the COC request",
+            "pattern": "^[0-9]{10}$"
+          },
+          "providerTaxonomy": {
+            "type": "string",
+            "description": "Indicates the taxonomy of the provider",
+            "minLength": 1,
+            "maxLength": 10
+          },
+          "merExemptionId": {
+            "type": "string",
+            "description": "The unique six-digit number assigned to the MER",
+            "minLength": 1,
+            "maxLength": 6
+          },
+          "exemptionToEnrollmentDenialCode": {
+            "type": "string",
+            "description": "The denial code from the Exemption Transition Data Report",
+            "enum": [
+              "A2",
+              "A5",
+              "A6",
+              "A7",
+              "A8",
+              "A9",
+              "B",
+              "B2",
+              "B5",
+              "B6",
+              "B7",
+              "B8",
+              "B10",
+              "C1",
+              "C2",
+              "C3",
+              "D",
+              "E",
+              "F",
+              "H",
+              "I",
+              "J",
+              "L",
+              "N",
+              "Q",
+              "R",
+              "S",
+              "T",
+              "U",
+              "V",
+              "X",
+              "Y"
+            ]
+          },
+          "exemptionToEnrollmentDenialDate": {
+            "type": "string",
+            "description": "Date the Exemption to Enrollment was denied",
+            "pattern": "^[0-9]{8}$"
+          },
+          "merCocDispositionIndicator": {
+            "type": "string",
+            "description": "Indicate if and how MER COC is met",
+            "enum": [
+              "The beneficiary was informed that the MCP and the out-of-network FFS provider were unable to agree to a rate",
+              "The MCP has documented quality of care issues",
+              "The MCP made a good faith effort to contact the provider and the provider was non-responsive for 30 calendar days",
+              "COC was provided",
+              "MER COC Not Met"
+            ]
+          },
+          "merCocDispositionDate": {
+            "type": "string",
+            "description": "The date on which The MER COC was determined either Met or Not Met",
+            "pattern": "^[0-9]{8}$"
+          },
+          "reasonMerCocNotMetIndicator": {
+            "type": "string",
+            "description": "The reason for the MER COC not being met",
+            "enum": [
+              "CoC in progress",
+              "CoC was not needed",
+              "Insufficient documentation",
+              "MCP not primary insurance",
+              "Member not enrolled with MCP",
+              "Member was not responsive to outreach",
+              "No provider linkage",
+              "Plan did not complete outreach efforts",
+              "Provider refused to contract",
+              "Other"
+            ]
+          }
+        },
+        "required": [
+          "planCode",
+          "cin",
+          "cocId",
+          "recordType",
+          "cocReceivedDate",
+          "cocType",
+          "benefitType",
+          "cocDispositionIndicator"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "outOfNetwork": {
+      "type": "array",
+      "description": "Out of Network requests",
+      "items": {
+        "type": "object",
+        "properties": {
+          "planCode": {
+            "$ref": "#/definitions/planCodeDefinition"
+          },
+          "cin": {
+            "$ref": "#/definitions/cinDefinition"
+          },
+          "oonId": {
+            "type": "string",
+            "description": "Unique identifier for each submitted out of network record",
+            "minLength": 4,
+            "maxLength": 20
+          },
+          "recordType": {
+            "$ref": "#/definitions/recordTypeDefinition"
+          },
+          "parentOonId": {
+            "type": "string",
+            "description": "Links to Original Out of Network when either a Resubmission or Void is sent. Leave blank when Record type = Original",
+            "minLength": 4,
+            "maxLength": 20
+          },
+          "oonRequestReceivedDate": {
+            "type": "string",
+            "description": "Date the Out of Network Request was received",
+            "pattern": "^[0-9]{8}$"
+          },
+          "referralRequestReasonIndicator": {
+            "type": "string",
+            "description": "The reason the referral was requested",
+            "enum": [
+              "Member's preference",
+              "Provider not accepting new patients",
+              "Provider not available in network",
+              "Specialized procedure / area of expertise",
+              "Timely Access to provider",
+              "Other"
+            ]
+          },
+          "oonResolutionStatusIndicator": {
+            "type": "string",
+            "description": "Approval status of the Out of Network Request",
+            "enum": [
+              "Approved",
+              "Pending",
+              "Denied",
+              "Cancelled",
+              "Redirected",
+              "Partial Approval"
+            ]
+          },
+          "oonRequestResolvedDate": {
+            "type": "string",
+            "description": "Date the Out of Network Request was resolved. Leave blank if Resolution Status Indicator is pending",
+            "pattern": "^[0-9]{8}$"
+          },
+          "partialApprovalExplanation": {
+            "type": "string",
+            "description": "When OON Resolution Status Indicator = Partial Approval, document what portion of the request was approved and what portion was denied. Otherwise leave blank",
+            "maxLength": 500
+          },
+          "specialistProviderNpi": {
+            "type": "string",
+            "description": "Identifier of the Out of Network Specialist being requested",
+            "pattern": "^[0-9]{10}$"
+          },
+          "providerTaxonomy": {
+            "type": "string",
+            "description": "Indicates the taxonomy of the provider. (For Out of Network, this is the Taxonomy associated with the Specialist Provider NPI)",
+            "minLength": 1,
+            "maxLength": 10
+          },
+          "serviceLocationAddressLine1": {
+            "type": "string",
+            "description": "First line of the service location address",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "serviceLocationAddressLine2": {
+            "type": "string",
+            "description": "Second line of the service location address",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "serviceLocationCity": {
+            "type": "string",
+            "description": "City of the service location",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "serviceLocationState": {
+            "type": "string",
+            "description": "Must be a valid state",
+            "minLength": 2,
+            "maxLength": 2
+          },
+          "serviceLocationZip": {
+            "type": "string",
+            "description": "ZIP Code of the service location",
+            "minLength": 5,
+            "maxLength": 5
+          },
+          "serviceLocationCountry": {
+            "type": "string",
+            "description": "Must be a valid country code",
+            "minLength": 2,
+            "maxLength": 3
+          }
+        },
+        "required": [
+          "planCode",
+          "cin",
+          "oonId",
+          "recordType",
+          "oonRequestReceivedDate",
+          "referralRequestReasonIndicator",
+          "oonResolutionStatusIndicator",
+          "specialistProviderNpi",
+          "providerTaxonomy",
+          "serviceLocationAddressLine1",
+          "serviceLocationCity",
+          "serviceLocationCountry"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "header"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "recordTypeDefinition": {
+      "type": "string",
+      "description": "Indicates the type of record.  Note that Resubmission and Void records will be rejected if there is not a previously accepted Submission with an ID that matches the Parent ID",
+      "enum": [
+        "Original",
+        "Resubmission",
+        "Void"
+      ]
+    },
+    "benefitTypeDefinition": {
+      "type": "string",
+      "description": "Defines the type of benefit that the record addresses",
+      "enum": [
+        "Durable Medical Equipment",
+        "Emergency",
+        "Inpatient Physical Health",
+        "Not Benefit Related",
+        "Mental and Behavioral Health",
+        "Outpatient Physical Health",
+        "Pharmacy",
+        "Managed Long Term Services and Supports",
+        "California Children Services",
+        "Palliative Care",
+        "Pregnancy and Post-Partum",
+        "Transportation",
+        "Dental"
+      ]
+    },
+    "planCodeDefinition": {
+      "type": "string",
+      "description": "The plan code for each county which plan operates in. Do not report subcontracting health plans separately",
+      "minLength": 3,
+      "maxLength": 3
+    },
+    "cinDefinition": {
+      "type": "string",
+      "description": "The member's CIN number as nine-characters that consists of eight numbers and one letter. CINs must lead with a 9 and end with a letter character",
+      "pattern": "^[0-9]{8}[A-Z]$"
+    }
+  }
+}

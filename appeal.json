@@ -1,0 +1,141 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Appeal Record",
+    "description": "Managed Care Program Data format for Appeals.",
+    "type": "object",
+    "properties": {
+                    "planCode": {
+                        "$ref": "#/definitions/planCodeDefinition"
+                    },
+                    "cin": {
+                        "$ref": "#/definitions/cinDefinition"
+                    },
+                    "appealId": {
+                        "type": "string",
+                        "description": "Unique identifier for each submitted appeal record",
+                        "minLength": 4,
+                        "maxLength": 20
+                    },
+                    "recordType": {
+                        "$ref": "#/definitions/recordTypeDefinition"
+                    },
+                    "parentGrievanceId": {
+                        "type": "string",
+                        "description": "Links to Original Grievance when either a Resubmission or Void is sent. Leave blank when Record type = Original",
+                        "minLength": 4,
+                        "maxLength": 20
+                    },
+                    "parentAppealId": {
+                        "type": "string",
+                        "description": "Links to Original Appeal when either a Resubmission or Void is sent. Leave blank when Record type = Original",
+                        "minLength": 4,
+                        "maxLength": 20
+                    },
+                    "appealReceivedDate": {
+                        "type": "string",
+                        "description": "The date the plan received the appeal",
+                        "pattern": "^[0-9]{8}$"
+                    },
+                    "noticeOfActionDate": {
+                        "type": "string",
+                        "description": "The date the plan sent the Notice of Action to the beneficiary",
+                        "pattern": "^[0-9]{8}$"
+                    },
+                    "appealType": {
+                        "type": "string",
+                        "description": "The Appeal type that is being reported",
+                        "enum": [
+                            "Denied",
+                            "Deferred",
+                            "Modified"
+                        ]
+                    },
+                    "benefitType": {
+                        "$ref": "#/definitions/benefitTypeDefinition"
+                    },
+                    "appealResolutionStatusIndicator": {
+                        "type": "string",
+                        "description": "The code for the Appeal's resolution outcome",
+                        "enum": [
+                            "Unresolved",
+                            "Resolved in Favor of Member",
+                            "Resolved in Favor of Plan"
+                        ]
+                    },
+                    "appealResolutionDate": {
+                        "type": "string",
+                        "description": "The date the plan resolved the appeal. Leave blank if Resolved Appeal = Unresolved",
+                        "pattern": "^[0-9]{8}$"
+                    },
+                    "partiallyOverturnIndicator": {
+                        "type": "string",
+                        "description": "A partially overturned appeal occurs when a benefit or service has been modified or adjusted from the original request",
+                        "enum": [
+                            "Not a Partially Overturned Appeal",
+                            "Partially Overturned Appeal"
+                        ]
+                    },
+                    "expeditedIndicator": {
+                        "type": "string",
+                        "description": "Indicates whether the Appeal was expedited",
+                        "enum": [
+                            "Expedited",
+                            "Not Expedited"
+                        ]
+                    }
+                },
+                "required": [
+                    "planCode",
+                    "cin",
+                    "appealId",
+                    "recordType",
+                    "appealReceivedDate",
+                    "appealType",
+                    "benefitType",
+                    "appealResolutionStatusIndicator",
+                    "partiallyOverturnIndicator",
+                    "expeditedIndicator"
+                ],
+                "additionalProperties": false,
+   "definitions": {
+        "recordTypeDefinition": {
+            "type": "string",
+            "description": "Indicates the type of record.  Note that Resubmission and Void records will be rejected if there is not a previously accepted Submission with an ID that matches the Parent ID",
+            "enum": [
+                "Original",
+                "Resubmission",
+                "Void"
+            ]
+        },
+        "benefitTypeDefinition": {
+            "type": "string",
+            "description": "Defines the type of benefit that the record addresses",
+          "enum": [
+            "Durable Medical Equipment",
+            "Emergency",
+            "Inpatient Physical Health",
+            "Not Benefit Related",
+            "Mental and Behavioral Health",
+            "Outpatient Physical Health",
+            "Pharmacy",
+            "Managed Long Term Services and Supports",
+            "California Children Services",
+            "Palliative Care",
+            "Pregnancy and Post-Partum",
+            "Transportation",
+            "Dental"
+          ]
+        },
+        "planCodeDefinition": {
+            "type": "string",
+            "description": "The plan code for each county which plan operates in. Do not report subcontracting health plans separately",
+            "minLength": 3,
+            "maxLength": 3
+        },
+        "cinDefinition": {
+            "type": "string",
+            "description": "The member's CIN number as nine-characters that consists of eight numbers and one letter. CINs must lead with a 9 and end with a letter character",
+            "pattern": "^[0-9]{8}[A-Z]$"
+        }
+    }	
+}
